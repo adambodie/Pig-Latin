@@ -1,5 +1,10 @@
 -- piglatin.hs
 
+module Piglatin
+( pigWord
+, pigSentence
+) where
+
 import Data.List
 import Data.Char
 
@@ -22,8 +27,8 @@ consonants = snd (partition (`elem` allVowels) allLetters)
 symbols = ['?', '.', ',', '!', ':', ';', '&', '*', '(', ')']
 
 -- Separates the word and the symbol at the end of a word if found
-firstSymbol xs = fst (break (`elem` symbols) xs)
-secondSymbol xs = snd (break (`elem` symbols) xs)  
+firstSymbol = fst . break (`elem` symbols)
+secondSymbol = snd . break (`elem` symbols)  
 
 -- Checks to determine if the first letter in a word is a vowel, adding +"way" at the end if it is, keeping it the same if not.
 pigVowel myWord = if firstLetter myWord `elem` allVowels
@@ -31,13 +36,13 @@ pigVowel myWord = if firstLetter myWord `elem` allVowels
 				else myWord
 
 -- Searches in a word until the first vowel appears, separating the consonant cluster before the vowel from the rest of the word.				
-firstCluster xs = fst (span (`elem` consonants) xs)
-secondCluster xs = snd (span (`elem` consonants) xs)   
+firstCluster = fst . span (`elem` consonants)
+secondCluster = snd . span (`elem` consonants)   
 
 -- Check to determine of the first letter in a word is a consonant, grabbing the consonant cluster and putting it after the rest of the word, suffix "ay" and any symbols at the end of the word
-pigConsonant myWord = if firstLetter myWord `elem` consonants
+pigWord myWord = if firstLetter myWord `elem` consonants
 				then firstSymbol (secondCluster myWord) ++ firstCluster myWord ++ "ay" ++ secondSymbol myWord
 				else pigVowel myWord
 
 -- Takes a sentence, separating it into a list of words, turning words into Pig Latin and making the list a sentence again.				
-pigLatin xs = unwords (map (pigConsonant) (words xs))
+pigSentence  = unwords . map (pigWord) . words
