@@ -1,14 +1,15 @@
 -- piglatin.hs
 
 module Piglatin
-( pigWord
-, pigSentence
+( pigSentence
+, pigWord
 ) where
 
 import Data.List
 import Data.Char
 
 -- Sets up the first and last letters of a word
+firstLetter :: [a] -> a
 firstLetter xs = xs !! 0
 lastLetter xs = xs !! (length xs - 1)
 
@@ -31,18 +32,20 @@ firstSymbol = fst . break (`elem` symbols)
 secondSymbol = snd . break (`elem` symbols)  
 
 -- Checks to determine if the first letter in a word is a vowel, adding +"way" at the end if it is, keeping it the same if not.
-pigVowel myWord = if firstLetter myWord `elem` allVowels
-				then firstSymbol myWord ++ "way" ++ secondSymbol myWord
-				else myWord
+pigVowel :: String -> String
+pigVowel myWord 
+		| firstLetter myWord `elem` allVowels = firstSymbol myWord ++ "way" ++ secondSymbol myWord
+		| otherwise = myWord
 
 -- Searches in a word until the first vowel appears, separating the consonant cluster before the vowel from the rest of the word.				
 firstCluster = fst . span (`elem` consonants)
 secondCluster = snd . span (`elem` consonants)   
 
 -- Check to determine of the first letter in a word is a consonant, grabbing the consonant cluster and putting it after the rest of the word, suffix "ay" and any symbols at the end of the word
-pigWord myWord = if firstLetter myWord `elem` consonants
-				then firstSymbol (secondCluster myWord) ++ firstCluster myWord ++ "ay" ++ secondSymbol myWord
-				else pigVowel myWord
+pigWord :: String -> String
+pigWord myWord 
+		| firstLetter myWord `elem` consonants = firstSymbol (secondCluster myWord) ++ firstCluster myWord ++ "ay" ++ secondSymbol myWord
+		| otherwise = pigVowel myWord
 
 -- Takes a sentence, separating it into a list of words, turning words into Pig Latin and making the list a sentence again.				
-pigSentence  = unwords . map (pigWord) . words
+pigSentence  = unwords . map (pigWord) . words		
