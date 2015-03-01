@@ -25,7 +25,8 @@ allLetters = letters ++ lettersUpper
 consonants = snd (partition (`elem` allVowels) allLetters)
 
 -- A list of all the symbols
-symbols = ['?', '.', ',', '!', ':', ';', '&', '*', '(', ')']
+characters = map chr [0..127]
+symbols = snd (partition (`elem` allLetters) characters)
 
 -- Separates the word and the symbol at the end of a word if found
 firstSymbol = fst . break (`elem` symbols)
@@ -34,8 +35,8 @@ secondSymbol = snd . break (`elem` symbols)
 -- Checks to determine if the first letter in a word is a vowel, adding +"way" at the end if it is, keeping it the same if not.
 pigVowel :: String -> String
 pigVowel myWord 
-		| firstLetter myWord `elem` allVowels = firstSymbol myWord ++ "way" ++ secondSymbol myWord
-		| otherwise = myWord
+		| firstLetter myWord `elem` allVowels = map toLower (firstSymbol myWord) ++ "way" ++ secondSymbol myWord
+		| otherwise = map toLower myWord
 
 -- Searches in a word until the first vowel appears, separating the consonant cluster before the vowel from the rest of the word.				
 firstCluster = fst . span (`elem` consonants)
@@ -44,7 +45,7 @@ secondCluster = snd . span (`elem` consonants)
 -- Check to determine of the first letter in a word is a consonant, grabbing the consonant cluster and putting it after the rest of the word, suffix "ay" and any symbols at the end of the word
 pigWord :: String -> String
 pigWord myWord 
-		| firstLetter myWord `elem` consonants = firstSymbol (secondCluster myWord) ++ firstCluster myWord ++ "ay" ++ secondSymbol myWord
+		| firstLetter myWord `elem` consonants = firstSymbol (secondCluster myWord) ++ map toLower (firstCluster myWord) ++ "ay" ++ secondSymbol myWord
 		| otherwise = pigVowel myWord
 
 -- Takes a sentence, separating it into a list of words, turning words into Pig Latin and making the list a sentence again.				
